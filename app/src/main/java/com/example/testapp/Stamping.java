@@ -1,5 +1,6 @@
 package com.example.testapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -90,13 +91,25 @@ public class Stamping extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        // インテントの生成
+        Intent intent = null;
+        switch (item.getItemId()) {
+            case R.id.action_stamping:
+                intent = new Intent(this, Stamping.class);
+                // intent.setClassName("com.example.testapp", "com.example.testapp.Stamping");
+                break;
+
+            case R.id.action_calendar:
+                intent = new Intent(this, Calendar.class);
+                // intent.setClassName("com.example.testapp", "com.example.testapp.Calendar");
+                break;
         }
 
+        if( intent != null) {
+            // SubActivity の起動
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 
