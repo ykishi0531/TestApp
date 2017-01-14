@@ -4,6 +4,7 @@ public class Const {
 
     /** 年月フォーマット */
     public static final String ymdJP = "yyyy年MM月dd日";
+    public static final String ymdStr = "yyyyMMdd";
     /** 時分秒フォーマット */
     public static final String hhmmss = "HH:mm:ss";
 
