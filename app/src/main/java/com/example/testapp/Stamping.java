@@ -164,6 +164,5 @@ public class Stamping extends AppCompatActivity {
             mTimer.cancel();
             mTimer = null;
         }
-        OpenHelperManager.releaseHelper();
     }
 }
