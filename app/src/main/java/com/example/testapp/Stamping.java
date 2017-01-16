@@ -10,10 +10,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.testapp.common.Const;
+import com.example.testapp.dao.TestDao;
 import com.example.testapp.entity.TestTable;
-import com.example.testapp.helper.TestDatabaseHelper;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.dao.Dao;
 
 import java.util.Date;
 import java.sql.SQLException;
@@ -30,8 +29,8 @@ public class Stamping extends AppCompatActivity {
 
     private static String stampingDivision = Const.STAMPING_DIVISION_NONE;
 
+    private TestDao dao;
     private TestTable hoge;
-    private Dao<TestTable, Long> dao = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +39,11 @@ public class Stamping extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-        // DB
-        TestDatabaseHelper helper = OpenHelperManager.getHelper(this, TestDatabaseHelper.class);
-        // RuntimeExceptionDao<TestTable, Long> dao = helper.getRuntimeExceptionDao(TestTable.class);
-
+        // 打刻状況を取得
         try {
-            dao = helper.getDao(TestTable.class);
+            dao = new TestDao(this);
             String ymdString = ymdStr.format(System.currentTimeMillis());
-            hoge = dao.queryBuilder().where().eq("attendanceYmd", ymdString).queryForFirst();
+            hoge = dao.findByAttendanceYmd(ymdString);
         } catch( SQLException e) {
             e.printStackTrace();
         }
@@ -99,27 +94,30 @@ public class Stamping extends AppCompatActivity {
                 String nowDate = hms.format(now);
 
                 try{
-
+                    // 出勤
                     if( hoge == null || hoge.getAttendanceYmd() == null ) {
                         ((TextView) findViewById(R.id.attendance)).setText(nowDate);
                         stampingDivision = Const.STAMPING_DIVISION_ATTENDANCE;
                         ((TextView) findViewById(R.id.stamp)).setText(Const.LEAVING_TEXT);
                         findViewById(R.id.stamp).setBackgroundResource(R.drawable.shape_rounded_corners_5dp_attendanced);
 
-                        // 永続化
+                        // 出勤日、出勤時間を登録する
                         hoge = new TestTable(ymdString, now, null);
-                        dao.create(hoge);
+                        dao.createOrUpdate(hoge);
                     }
+                    // 退勤
                     else if( hoge.getLeavingDate() == null){
                         ((TextView) findViewById(R.id.leaving)).setText(nowDate);
                         stampingDivision = Const.STAMPING_DIVISION_LEAVING;
                         ((TextView) findViewById(R.id.stamp)).setText(Const.LEAVED_TEXT);
                         findViewById(R.id.stamp).setBackgroundResource(R.drawable.shape_rounded_corners_5dp_reaved);
 
+                        // 退勤時間を登録する
                         hoge.setLeavingDate(now);
-                        dao.update(hoge);
+                        dao.createOrUpdate(hoge);
                     }
-                    // 以下デバッグ用
+                    // 以下デバッグ用。
+                    // 打刻状態をリセットして、レコードを削除する
                     else {
                         ((TextView) findViewById(R.id.attendance)).setText("--");
                         ((TextView) findViewById(R.id.leaving)).setText("--");
@@ -127,7 +125,8 @@ public class Stamping extends AppCompatActivity {
                         ((TextView) findViewById(R.id.stamp)).setText("出勤");
                         findViewById(R.id.stamp).setBackgroundResource(R.drawable.shape_rounded_corners_5dp);
 
-                        dao.delete(hoge);
+                        dao.delete(hoge.getId());
+                        hoge = null;
                     }
                 }catch (SQLException e) {
                     e.printStackTrace();

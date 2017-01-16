@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public class TestDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final String DATABASE_NAME = "test_db2";
+    private static final String DATABASE_NAME = "test_db";
     private static final int DATABSE_VERSION = 1;
 
     public TestDatabaseHelper(Context context) {
