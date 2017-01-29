@@ -5,8 +5,11 @@ public class Const {
     /** 年月フォーマット */
     public static final String ymdJP = "yyyy年MM月dd日";
     public static final String ymdStr = "yyyyMMdd";
+    public static final String ymStr = "yyyyMM";
     /** 時分秒フォーマット */
     public static final String hhmmss = "HH:mm:ss";
+    public static final String hhmm = "HH:mm";
+    public static final String emptyHHmm = "--:--";
 
     /** 打刻区分: 未打刻 */
     public static final String STAMPING_DIVISION_NONE = "00";

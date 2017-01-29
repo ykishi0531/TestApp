@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.example.testapp.common.Const;
 import com.example.testapp.dao.TestDao;
 import com.example.testapp.entity.TestTable;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.util.Date;
 import java.sql.SQLException;
@@ -44,7 +43,7 @@ public class Stamping extends AppCompatActivity {
         try {
             dao = new TestDao(this);
             String ymdString = ymdStr.format(System.currentTimeMillis());
-            hoge = dao.findByAttendanceYmd(ymdString);
+            hoge = dao.findByAttendanceYmd(ymdString.substring(0,6), ymdString.substring(6));
         } catch( SQLException e) {
             e.printStackTrace();
         }
@@ -96,15 +95,16 @@ public class Stamping extends AppCompatActivity {
 
                 try{
                     // 出勤
-                    if( hoge == null || hoge.getAttendanceYmd() == null ) {
+                    if( hoge == null || hoge.getAttendanceYm() == null ) {
                         ((TextView) findViewById(R.id.attendance)).setText(nowDate);
                         stampingDivision = Const.STAMPING_DIVISION_ATTENDANCE;
                         ((TextView) findViewById(R.id.stamp)).setText(Const.LEAVING_TEXT);
                         findViewById(R.id.stamp).setBackgroundResource(R.drawable.shape_rounded_corners_5dp_attendanced);
 
                         // 出勤日、出勤時間を登録する
-                        hoge = new TestTable(ymdString, now, null);
+                        hoge = new TestTable(ymdString.substring(0,6), ymdString.substring(6), now, null);
                         dao.createOrUpdate(hoge);
+                        hoge = dao.findByAttendanceYmd(ymdString.substring(0,6), ymdString.substring(6));
                     }
                     // 退勤
                     else if( hoge.getLeavingDate() == null){
@@ -115,6 +115,9 @@ public class Stamping extends AppCompatActivity {
 
                         // 退勤時間を登録する
                         hoge.setLeavingDate(now);
+                        System.out.println(hoge.getAttendanceDate());
+                        System.out.println(hoge.getLeavingDate());
+                        System.out.println(hoge.getId());
                         dao.createOrUpdate(hoge);
                     }
                     // 以下デバッグ用。

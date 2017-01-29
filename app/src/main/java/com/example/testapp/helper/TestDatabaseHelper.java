@@ -34,4 +34,8 @@ public class TestDatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         System.out.println("Database version up");
     }
+
+    public String getDatabaseName() {
+        return DATABASE_NAME;
+    }
 }

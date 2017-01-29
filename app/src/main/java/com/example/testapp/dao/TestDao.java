@@ -8,6 +8,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
+import java.util.List;
 
 
 public class TestDao{
@@ -41,12 +42,23 @@ public class TestDao{
 
     /**
      * 出勤年月日で検索
-     * @param attendanceYmd
+     * @param attendanceYm
+     * @param attendanceDay
      * @return
      * @throws SQLException
      */
-    public TestTable findByAttendanceYmd (String attendanceYmd) throws SQLException{
-        return dao.queryBuilder().where().eq("attendanceYmd", attendanceYmd).queryForFirst();
+    public TestTable findByAttendanceYmd (String attendanceYm, String attendanceDay) throws SQLException{
+        return dao.queryBuilder().where().eq("attendanceYm", attendanceYm).and().eq("attendanceDay", attendanceDay).queryForFirst();
+    }
+
+    /**
+     * 出勤年月で検索;
+     * @param attendanceYm
+     * @return
+     * @throws SQLException
+     */
+    public List<TestTable> findByAttendanceYm (String attendanceYm) throws SQLException {
+        return dao.queryBuilder().where().eq("attendanceYm", attendanceYm).query();
     }
 
     /**
